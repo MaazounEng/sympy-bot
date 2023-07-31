@@ -39,3 +39,16 @@ async def main_post(request):
         result = await router.dispatch(event, gh)
 
     return web.Response(status=200, text=str(result))
+
+async def main_get(request):
+    oauth_token = os.environ.get("GH_AUTH")
+
+    async with ClientSession() as session:
+        gh = GitHubAPI(session, USER, oauth_token=oauth_token)
+        await gh.getitem("/rate_limit")
+        rate_limit = gh.rate_limit
+        remaining = rate_limit.remaining
+        total = rate_limit.limit
+        reset_datetime = rate_limit.reset_datetime
+
+    return web.Response(status=200, text=f"SymPy Bot has {remaining} of {total} GitHub API requests remaining. They will reset on {reset_datetime} (UTC), which is in {reset_datetime - datetime.datetime.now(datetime.timezone.utc)}.")
