@@ -39,7 +39,18 @@ async def main_post(request):
         result = await router.dispatch(event, gh)
 
     return web.Response(status=200, text=str(result))
+  
+@router.register("issues", action="opened")
 
+async def issue_opened_event(event, gh, *args, **kwargs):
+    """
+    Whenever an issue is opened, greet the author and say thanks.
+    """
+    url = event.data["issue"]["comments_url"]
+    author = event.data["issue"]["user"]["login"]
+
+    message = f"Thanks for the report @{author}! I will look into it ASAP! (I'm a bot)."
+    await gh.post(url, data={"body": message})
 async def main_get(request):
     oauth_token = os.environ.get("GH_AUTH")
 
