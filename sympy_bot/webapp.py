@@ -40,7 +40,7 @@ async def main_post(request):
 
     return web.Response(status=200, text=str(result))
   
-@router.register("issues", action="opened")
+@router.register("issues", action="reopened")
 
 async def issue_opened_event(event, gh, *args, **kwargs):
     """
